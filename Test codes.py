@@ -44,7 +44,3 @@ def alphaconvert(lambdaterm, application):
     for j in range(0, len(str(application))):
         if str(application)[j] in BV:
             CA.append(str(application)[j])
-
-
-
-    
