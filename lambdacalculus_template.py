@@ -5,25 +5,32 @@ lam = chr(955)
 class LambdaTerm:
     """Abstract Base Class for lambda terms."""
 
+    # define usable variable names
     varchars = ['u', 'x', 'y', 'z']
 
     # returns a lambda term created from the string argument
     # categorize lambda terms using brackets, working from outside in
     @staticmethod
     def fromstring(string):
+        # define characters for later convenience
         lambdat = ''
         l = '('
         r = ')'
+        
         # find most right bracket after removing outer brackets
         string.strip(r)
         nextr = string.rfind(r)
-        if string[nextr+1] == ' ': # Application if space before bracket
+        
+        # application if space after bracket
+        if string[nextr+1] == ' ':
             lamdbdat = Application.frstring(string)
-
+        # 
         else:
-            nextl = string[len(string)-nextr-1] # The corresponding left bracket
+            # the corresponding left bracket
+            nextl = string[len(string)-nextr-1]
 
-            if string[nextl+1] == l and string[nextl+2] == lam: # Abstraction if (λ follows bracket
+            # abstraction if (λ follows bracket
+            if string[nextl+1] == l and string[nextl+2] == lam:
                 lambdat = Abstraction.frstring()
 
             else: # Correct variable if all the characters in it are correct characters
@@ -66,12 +73,14 @@ class Variable(LambdaTerm):
     def reduce(self, rule=[]):
         return self
 
+
 class Abstraction(LambdaTerm):
     """Represents a lambda term of the form (λx.M)."""
 
     # create an abstraction using the head variable in string format and the body as a lambda term
     def __init__(self, varstr, body):
-        if isinstance(body, (LambdaTerm, Variable, Application, Abstraction)): # we require the body to be lambda term
+        # we require the body to be a lambda term
+        if isinstance(body, (LambdaTerm, Variable, Application, Abstraction)):
             self.head = Variable(str(varstr))
             self.body = body
 
@@ -83,10 +92,10 @@ class Abstraction(LambdaTerm):
 
     # apply beta reduction when applying a lambda term to a lambda abstraction
     def __call__(self, argument):
-        forcal = Application(self, argument)
-        forcal.reduce()
+        forcall = Application(self, argument)
+        forcall.reduce()
 
-    # substitute lambdaterms when it does not mean alpha conversion
+    # substitute lambda terms when it does not mean alpha conversion
     def substitute(self, rule):
         if self.head.var != rule[0]: # we should also check if this is a legitimate substitution
             return Abstraction(self.head, self.body.substitute(rule))
@@ -104,7 +113,7 @@ class Abstraction(LambdaTerm):
 class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
 
-    # create new application from two lambdaterms
+    # create new application from two lambda terms
     def __init__(self, lambdaterm, argument):
         self.M = lambdaterm
         self.N = argument
@@ -119,10 +128,12 @@ class Application(LambdaTerm):
         return Application(self.M.substitute(rule), self.N.substitute(rule))
 
     def reduce(self, rule=[]):
-        if isinstance(self.M, Abstraction): # assume M is a lambda abstraction and N is a lambdaterm
+        # assume M is a lambda abstraction and N is a lambda term
+        if isinstance(self.M, Abstraction): # assume M is a lambda abstraction and N is a lambda term
             rule = [str(self.M.head), self.N]
             return self.M.body.substitute(rule)
-        else: # reduce individually M and N
+        # reduce M and N independently
+        else:
             return Application(self.M.reduce, self.N.reduce)
 
     def frstring(self, string):
@@ -132,8 +143,8 @@ class Application(LambdaTerm):
         return self
 
 
-# create lambdaterms
-# the following implements the lambdaterm:  (((λx.(λy.x) z) u)
+# create lambda terms
+# the following implements the lambda term:  (((λx.(λy.x) z) u)
 print("------------------------- ")
 (q,w,e,r,t,y,u,i) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"))
 x = Variable("x")
