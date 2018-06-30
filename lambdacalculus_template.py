@@ -8,10 +8,49 @@ class LambdaTerm:
     # define usable variable names
     varchars = ['u', 'x', 'y', 'z']
 
+    def find_parentheses(s):
+        """ Find and return the location of the matching parentheses pairs in s.
+
+        Given a string, s, return a dictionary of start: end pairs giving the
+        indexes of the matching parentheses in s. Suitable exceptions are
+        raised if s contains unbalanced parentheses.
+        """
+
+        # The indexes of the open parentheses are stored in a stack, implemented
+        # as a list
+
+        stack = []
+        parentheses_locs = {}
+        for i, c in enumerate(s):
+            if c == '(':
+                stack.append(i)
+            elif c == ')':
+                try:
+                    parentheses_locs[stack.pop()] = i
+                except IndexError:
+                    raise IndexError('Too many close parentheses at index {}'
+                                                                    .format(i))
+        if stack:
+            raise IndexError('No matching close parenthesis to open parenthesis '
+                             'at index {}'.format(stack.pop()))
+        return parentheses_locs
+    
     # returns a lambda term created from the string argument
     # categorize lambda terms using brackets, working from outside in
     @staticmethod
     def fromstring(string):
+        for s in enumerate(string, start=1):
+            # find parentheses indices
+            try:
+                parentheses_locs = find_parentheses(s)
+                sorted([(k,v) for k, v in parentheses_locs.items()])
+            # parentheses do not match
+            except IndexError as e:
+                print(str(e))
+        
+        https://scipython.com/blog/parenthesis-matching-in-python/
+        
+        '''
         # define characters for later convenience
         lambdat = ''
         l = '('
@@ -40,7 +79,8 @@ class LambdaTerm:
                 lambdat = Variable(string)
 
         return lambdat
-
+        '''
+     
     # Define a substitution function, which receives a lambda term and a dictionary of replacements
     def substitute(self, rule):
         raise NotImplementedError
