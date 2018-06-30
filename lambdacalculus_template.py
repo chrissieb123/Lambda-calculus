@@ -7,7 +7,8 @@ class LambdaTerm:
 
     # define usable variable names
     varchars = ['u', 'x', 'y', 'z']
-    
+
+    @staticmethod
     def find_parentheses(s):
         """ Find and return the location of the matching parentheses pairs in s.
         Given a string, s, return a dictionary of start: end pairs giving the
@@ -49,7 +50,7 @@ class LambdaTerm:
         for s in enumerate(string, start=1):
             # find parentheses indices
             try:
-                parentheses_locs = find_parentheses(s)
+                parentheses_locs = LambdaTerm.find_parentheses(s)
                 indexpairs = sorted([(k,v) for k, v in parentheses_locs.items()])
             # parentheses do not match
             except IndexError as e:
@@ -109,6 +110,9 @@ class LambdaTerm:
     def frstring(self,string):
         raise NotImplementedError
 
+    def alphaconv(self,rule=[]):
+        raise NotImplementedError
+
 
 class Variable(LambdaTerm):
     """Represents a variable."""
@@ -120,10 +124,10 @@ class Variable(LambdaTerm):
         return self.var
 
     def __str__(self):
-        return str(self.var)
+        return self.var
 
     def substitute(self, rule):
-        if self.var == rule[0]:
+        if self.var == rule[0].var:
             return rule[1]
         else:
             return self
@@ -131,15 +135,22 @@ class Variable(LambdaTerm):
     def reduce(self, rule=[]):
         return self
 
+    def alphaconv(self, rule=[]):
+        return self.substitute(rule)
+
 
 class Abstraction(LambdaTerm):
     """Represents a lambda term of the form (λx.M)."""
 
-    # create an abstraction using the head variable in string format and the body as a lambda term
-    def __init__(self, varstr, body):
-        # we require the body to be a lambda term
-        if isinstance(body, (LambdaTerm, Variable, Application, Abstraction)):
-            self.head = Variable(str(varstr))
+    # list of bound variables
+    boundvar = []
+
+    # create an abstraction using a variable for the head and a lambda term for the body
+    def __init__(self, var, body):
+        # check if the body is a lambda term
+        if isinstance(body, (LambdaTerm, Variable, Application, Abstraction)) \
+                and isinstance(var, Variable):
+            self.head = var
             self.body = body
 
     def __repr__(self):
@@ -167,6 +178,20 @@ class Abstraction(LambdaTerm):
         self.body = self.body.fromstring(s2) # body after the dot
         return self
 
+    def alphaconv(self, rule=[]):
+        boundvar = [] # search for bound variables
+        self.checkbound(boundvar)
+        # to do, replace condition below with: "intersection between FV(rule[1]) and boundvar = empty"
+        if rule[1] not in boundvar: # only convert if var to substitute it with is not bound
+            return Abstraction(self.head.alphaconv(rule), self.body.alphaconv(rule))
+        else:
+            raise Exception
+
+    def checkbound(self, boundvar):
+        boundvar.append(self.head) # head is bound
+
+        if not isinstance(self.body, Variable): # add bound variables until body is variable
+            self.body.checkbound(boundvar)
 
 class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
@@ -187,8 +212,8 @@ class Application(LambdaTerm):
 
     def reduce(self, rule=[]):
         # assume M is a lambda abstraction and N is a lambda term
-        if isinstance(self.M, Abstraction): # assume M is a lambda abstraction and N is a lambda term
-            rule = [str(self.M.head), self.N]
+        if isinstance(self.M, Abstraction):
+            rule = [self.M.head, self.N]
             return self.M.body.substitute(rule)
         # reduce M and N independently
         else:
@@ -200,6 +225,13 @@ class Application(LambdaTerm):
         self.N = self.N.fromstring(s2)
         return self
 
+    def alphaconv(self,rule=[]):
+        return self
+
+    def checkbound(self,boundvar):
+        # assume M is a lambda abstraction and N is a lambda term
+        if isinstance(self.M, Abstraction):
+            self.M.checkbound(boundvar)
 
 # create lambda terms
 # the following implements the lambda term:  (((λx.(λy.x) z) u)
@@ -209,7 +241,7 @@ x = Variable("x")
 #print("Is x a variable?", type(x) == Variable)
 z = Variable("z")
 
-abs1 = Abstraction("y", x)
+abs1 = Abstraction(y, x)
 abs2 = Abstraction(x, abs1)
 
 app1 = Application(abs2, z)
@@ -219,15 +251,13 @@ print(app1)
 
 print(app1.reduce())
 
-# print(LambdaTerm.fromstring("((((λx.(λy.x)) z) u)"))
-
 # this implements ((λx.x) u)
 print("------------------------- identiteit voorbeeld")
-identitity = Abstraction(x, x)
+identity = Abstraction(x, x)
 
-appliopid = Application(identitity, u)
+appliopid = Application(identity, u)
 
-print(identitity)
+print(identity)
 print(appliopid)
 
 print(appliopid.reduce())
@@ -237,7 +267,7 @@ print(appliopid.reduce())
 print("------------------------- twee lambda abstracties in een applicatie")
 constant = Abstraction(u, z)
 
-appliopconst = Application(identitity, constant)
+appliopconst = Application(identity, constant)
 
 print(constant)
 print(appliopconst)
@@ -258,8 +288,6 @@ VB4abs = Abstraction(x,VB1app)
 VB2app = Application(VB4abs, VB3abs)
 
 print(VB2app)
-print(VB2app.reduce().reduce().reduce().reduce())
-
 
 def reducechecker(lambterm):
     if str(lambterm.reduce()) != str(lambterm):
@@ -269,3 +297,24 @@ def reducechecker(lambterm):
 
 
 print(reducechecker(VB2app))
+
+
+# print(LambdaTerm.fromstring("(((λx.(λy.x)) z) u)"))
+
+
+print("------------------------- alpha conversion example")
+print(identity)
+if (isinstance(identity, Abstraction)):
+    print(identity.alphaconv([identity.head,z]))
+
+# the following implements ((λx.λy.x) y), this should be reduced to (λz.y) or some other variable than z (but not y)
+print("------------------------- alpha conversion example")
+alphabs1 = Abstraction(y,x)
+alphabs2 = Abstraction(x, alphabs1)
+
+print(alphabs2)
+print(alphabs2.alphaconv([identity.head,y]))
+
+#alphapp1 = Application(vb2abs, y)
+
+#print(alphapp1.reduce())
