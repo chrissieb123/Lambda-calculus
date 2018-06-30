@@ -58,9 +58,10 @@ class Variable(LambdaTerm):
         return str(self.var)
 
     def substitute(self, rule):
-        print("rules: ", rule)
         if self.var == rule[0]:
             return rule[1]
+        else:
+            return self
 
     def reduce(self, rule=[]):
         return self
@@ -91,7 +92,7 @@ class Abstraction(LambdaTerm):
             return Abstraction(self.head, self.body.substitute(rule))
 
     def reduce(self, rule=[]):
-        return self.body.reduce(rule)
+        return Abstraction(self.head, self.body.reduce(rule))
 
     def frstring(self, string):
         s1,s2 = string.split('.')
@@ -174,7 +175,6 @@ print(appliopconst)
 
 print(appliopconst.reduce())
 
-"""
 # this implements ((λx.((λq.q) (λi.x)) (λu.z)), should print to (λi.(λu.z))
 print("------------------------- complex voorbeeld")
 
@@ -189,6 +189,14 @@ VB4abs = Abstraction(x,VB1app)
 VB2app = Application(VB4abs, VB3abs)
 
 print(VB2app)
+print(VB2app.reduce().reduce().reduce().reduce())
 
-print(VB2app.reduce())
-"""
+
+def reducechecker(lambterm):
+    if str(lambterm.reduce()) != str(lambterm):
+        return reducechecker(lambterm.reduce())
+    else:
+        return lambterm
+
+
+print(reducechecker(VB2app))
