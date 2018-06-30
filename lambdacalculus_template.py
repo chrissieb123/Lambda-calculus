@@ -61,9 +61,12 @@ class Variable(LambdaTerm):
         if self.var in rule.keys():
             self.var = rule[self.var]
 
-    def reduce(self, rule):
-        if self.var == rule[0]:
+    def reduce(self, rule): # substitute for reduce using rule
+        print(rule)
+        if self.var == rule[0]: # variable is key, substitute
             return rule[1]
+        # else:
+        #   return self # variable is not key, return the unchanged variable
         # TODO? use substitute instead or change sub to list, self.substitute(self, rule)
 
 class Abstraction(LambdaTerm):
@@ -93,8 +96,10 @@ class Abstraction(LambdaTerm):
 
     # continue reducing by passing on rule tuple or begin substitution
     def reduce(self, rule=[]):
+        print("rule:", rule)
         if len(rule) == 1: # no substitution yet, make a substitution rule from head and application rule
             rule = [self.head.var,rule[0]]
+            print(rule)
         return self.body.reduce(rule)
 
     def frstring(self, string):
@@ -120,10 +125,16 @@ class Application(LambdaTerm):
     def substitute(self, rule):
         raise NotImplementedError
 
-    # (start) bèta-reduce
     def reduce(self, rule=[]):
-        rule = [self.N] # pass on second lambdaterm as rule
-        return self.M.reduce(rule) # return the reduced first lambdaterm
+        print("M: ", self.M)
+        print("rule: ", rule)
+        if rule == []: # no substitution, start of reduce
+            rule = [self.N] # pass on second lambdaterm as rule
+
+            print("hij passt de if")
+            return self.M.reduce(rule)  # return the reduced first lambdaterm
+        else:
+            return Application(self.M.reduce(rule),self.N.reduce(rule))
 
     def frstring(self, string):
         s1, s2 = string.split(' ')
@@ -172,7 +183,7 @@ print(identitity)
 
 # this implements ((λx.x) (λu.z))
 print("-------------------------")
-constant = Abstraction("y", z)
+constant = Abstraction(u, z)
 
 appliopconst = Application(identitity, constant)
 
@@ -181,5 +192,19 @@ print(appliopconst)
 
 print(appliopconst.reduce())
 
-# this implements ((λx.((λq.q) (λi.x)) (λu.z))
+# this implements ((λx.((λq.q) (λi.x)) (λu.z)), should print to (λi.(λu.z))
 print("-------------------------")
+
+VB1abs = Abstraction(q,q)
+VB2abs = Abstraction(i,x)
+VB3abs = constant
+
+VB1app = Application(VB1abs,VB2abs)
+
+VB4abs = Abstraction(x,VB1app)
+
+VB2app = Application(VB4abs, VB3abs)
+
+print(VB2app)
+
+print(VB2app.reduce())
