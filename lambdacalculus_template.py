@@ -2,16 +2,46 @@
 lam = chr(955)
 
 class LambdaTerm:
+
     """Abstract Base Class for lambda terms."""
 
-    def fromstring(self, string):
-        raise NotImplementedError
+    varchars = ['u','x','y','z']
+
+    # returns a lambda term created from the string argument
+    # categorize lambda terms using brackets, working from outside in
+    @staticmethod
+    def fromstring(string):
+        lambdat = ''
+        l = '('
+        r = ')'
+        # find most right bracket after removing outer brackets
+        string.strip(r)
+        nextr = string.rfind(r)
+        if string[nextr+1] == ' ': # Application if space before bracket
+            lamdbdat = Application.frstring(string)
+
+        else:
+            nextl = string[len(string)-nextr-1] # The corresponding left bracket
+
+            if string[nextl+1] == l and string[nextl+2] == lam: # Abstraction if (λ follows bracket
+                lambdat = Abstraction.frstring()
+
+            else: # Correct variable if all the characters in it are correct characters
+                for i in range(len(string)):
+                    if string[i] not in varchars: # if there is an incorrect character, stop and raise exception
+                        raise NameError
+                lambdat = Variable(string)
+
+        return lambdat
 
     # Define a substitution function, which receives a lambda term and a dictionary of replacements
     def substitute(self, rule):
         raise NotImplementedError
 
     def reduce(self, rule=[]):
+        raise NotImplementedError
+
+    def frstring(self,string):
         raise NotImplementedError
 
 
@@ -69,8 +99,16 @@ class Abstraction(LambdaTerm):
         self.body = self.body.reduce(rule)
         return self
 
+    def frstring(self, string):
+        s1,s2 = string.split('.')
+        self.head = s1.lstrip(lam) # the head is what is between the lambda and the dot
+        self.body = self.body.fromstring(s2) # body after the dot
+        return self
+
 class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
+
+    splitchar = ' '
 
     # create new application from two lambdaterms
     def __init__(self, lambdaterm, argument):
@@ -92,6 +130,11 @@ class Application(LambdaTerm):
         self.M = self.M.reduce(rule)
         return self.M # return the reduced first lambdaterm
 
+    def frstring(self, string):
+        s1,s2 = string.split(' ')
+        self.M = self.M.fromstring(s1)
+        self.N = self.N.fromstring(s2)
+        return self
 
 # create lambdaterms
 # the following encodes the lambdaterm:  (((λx.(λy.x) z) u)
@@ -113,3 +156,5 @@ print(app2)
 
 print(app1.reduce())
 print(app2.reduce())
+
+print(LambdaTerm.fromstring("((((λx.(λy.x)) z) u)"))
