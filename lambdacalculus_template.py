@@ -58,16 +58,11 @@ class Variable(LambdaTerm):
         return str(self.var)
 
     def substitute(self, rule):
-        if self.var in rule.keys():
-            self.var = rule[self.var]
-
-    def reduce(self, rule): # substitute for reduce using rule
-        print(rule)
-        if self.var == rule[0]: # variable is key, substitute
+        if self.var == rule[0]:
             return rule[1]
-        # else:
-        #   return self # variable is not key, return the unchanged variable
-        # TODO? use substitute instead or change sub to list, self.substitute(self, rule)
+
+    def reduce(self, rule=[]):
+        return self
 
 class Abstraction(LambdaTerm):
     """Represents a lambda term of the form (λx.M)."""
@@ -90,7 +85,7 @@ class Abstraction(LambdaTerm):
 
     # substitute lambdaterms when it does not mean alpha conversion
     def substitute(self, rule):
-        if self.head.var not in rule.keys():
+        if self.head.var != rule[0]:
             # we should also check if this is a legitimate substitution
             self.body.substitute(rule)
 
@@ -134,7 +129,7 @@ class Application(LambdaTerm):
             print("hij passt de if")
             return self.M.reduce(rule)  # return the reduced first lambdaterm
         else:
-            return Application(self.M.reduce(rule),self.N.reduce(rule))
+            return Application(self.M.substitute(rule),self.N.substitute(rule)).reduce()
 
     def frstring(self, string):
         s1, s2 = string.split(' ')
