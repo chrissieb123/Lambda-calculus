@@ -58,6 +58,7 @@ class Variable(LambdaTerm):
         return str(self.var)
 
     def substitute(self, rule):
+        print("rules: ", rule)
         if self.var == rule[0]:
             return rule[1]
 
@@ -81,20 +82,15 @@ class Abstraction(LambdaTerm):
 
     # apply beta reduction when applying a lambda term to a lambda abstraction
     def __call__(self, argument):
-        self.reduce(str(self), argument)
+        forcal = Application(self, argument)
+        forcal.reduce()
 
     # substitute lambdaterms when it does not mean alpha conversion
     def substitute(self, rule):
-        if self.head.var != rule[0]:
-            # we should also check if this is a legitimate substitution
-            self.body.substitute(rule)
+        if self.head.var != rule[0]: # we should also check if this is a legitimate substitution
+            return Abstraction(self.head, self.body.substitute(rule))
 
-    # continue reducing by passing on rule tuple or begin substitution
     def reduce(self, rule=[]):
-        print("rule:", rule)
-        if len(rule) == 1: # no substitution yet, make a substitution rule from head and application rule
-            rule = [self.head.var,rule[0]]
-            print(rule)
         return self.body.reduce(rule)
 
     def frstring(self, string):
@@ -102,6 +98,7 @@ class Abstraction(LambdaTerm):
         self.head = s1.lstrip(lam) # the head is what is between the lambda and the dot
         self.body = self.body.fromstring(s2) # body after the dot
         return self
+
 
 class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
@@ -118,18 +115,14 @@ class Application(LambdaTerm):
         return "(" + str(self.M) + str(" ") + str(self.N) + ")"
 
     def substitute(self, rule):
-        raise NotImplementedError
+        return Application(self.M.substitute(rule), self.N.substitute(rule))
 
     def reduce(self, rule=[]):
-        print("M: ", self.M)
-        print("rule: ", rule)
-        if rule == []: # no substitution, start of reduce
-            rule = [self.N] # pass on second lambdaterm as rule
-
-            print("hij passt de if")
-            return self.M.reduce(rule)  # return the reduced first lambdaterm
-        else:
-            return Application(self.M.substitute(rule),self.N.substitute(rule)).reduce()
+        if isinstance(self.M, Abstraction): # assume M is a lambda abstraction and N is a lambdaterm
+            rule = [str(self.M.head), self.N]
+            return self.M.body.substitute(rule)
+        else: # reduce individually M and N
+            return Application(self.M.reduce, self.N.reduce)
 
     def frstring(self, string):
         s1, s2 = string.split(' ')
@@ -137,9 +130,10 @@ class Application(LambdaTerm):
         self.N = self.N.fromstring(s2)
         return self
 
+
 # create lambdaterms
 # the following implements the lambdaterm:  (((λx.(λy.x) z) u)
-print("-------------------------")
+print("------------------------- ")
 (q,w,e,r,t,y,u,i) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"))
 x = Variable("x")
 #print("Is x a variable?", type(x) == Variable)
@@ -151,19 +145,14 @@ abs2 = Abstraction(x, abs1)
 app1 = Application(abs2, z)
 app2 = Application(app1, u)
 
-print(abs1)
-print(abs2)
-
 print(app1)
-print(app2)
 
 print(app1.reduce())
-print(app2.reduce())
 
 # print(LambdaTerm.fromstring("((((λx.(λy.x)) z) u)"))
 
 # this implements ((λx.x) u)
-print("-------------------------")
+print("------------------------- identiteit voorbeeld")
 identitity = Abstraction(x, x)
 
 appliopid = Application(identitity, u)
@@ -173,11 +162,9 @@ print(appliopid)
 
 print(appliopid.reduce())
 
-print(identitity)
-
 
 # this implements ((λx.x) (λu.z))
-print("-------------------------")
+print("------------------------- twee lambda abstracties in een applicatie")
 constant = Abstraction(u, z)
 
 appliopconst = Application(identitity, constant)
@@ -187,8 +174,9 @@ print(appliopconst)
 
 print(appliopconst.reduce())
 
+"""
 # this implements ((λx.((λq.q) (λi.x)) (λu.z)), should print to (λi.(λu.z))
-print("-------------------------")
+print("------------------------- complex voorbeeld")
 
 VB1abs = Abstraction(q,q)
 VB2abs = Abstraction(i,x)
@@ -203,3 +191,4 @@ VB2app = Application(VB4abs, VB3abs)
 print(VB2app)
 
 print(VB2app.reduce())
+"""
