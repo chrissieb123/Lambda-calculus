@@ -113,6 +113,8 @@ class LambdaTerm:
     def alphaconv(self,rule=[]):
         raise NotImplementedError
 
+    def error():
+        return "Wrong input."
 
 class Variable(LambdaTerm):
     """Represents a variable."""
@@ -180,18 +182,18 @@ class Abstraction(LambdaTerm):
 
     def alphaconv(self, rule=[]):
         boundvar = [] # search for bound variables
-        self.checkbound(boundvar)
+        self.findbound(boundvar)
         # to do, replace condition below with: "intersection between FV(rule[1]) and boundvar = empty"
         if rule[1] not in boundvar: # only convert if var to substitute it with is not bound
             return Abstraction(self.head.alphaconv(rule), self.body.alphaconv(rule))
         else:
-            raise Exception
+            return (LambdaTerm.error())
 
-    def checkbound(self, boundvar):
+    def findbound(self, boundvar):
         boundvar.append(self.head) # head is bound
 
         if not isinstance(self.body, Variable): # add bound variables until body is variable
-            self.body.checkbound(boundvar)
+            self.body.findbound(boundvar)
 
 class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
@@ -228,15 +230,15 @@ class Application(LambdaTerm):
     def alphaconv(self,rule=[]):
         return self
 
-    def checkbound(self,boundvar):
+    def findbound(self,boundvar):
         # assume M is a lambda abstraction and N is a lambda term
         if isinstance(self.M, Abstraction):
-            self.M.checkbound(boundvar)
+            self.M.findbound(boundvar)
 
 # create lambda terms
 # the following implements the lambda term:  (((λx.(λy.x) z) u)
-print("------------------------- ")
-(q,w,e,r,t,y,u,i) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"))
+print("Bèta Reduction")
+(q,w,e,r,t,y,u,i,s) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"),Variable("s"))
 x = Variable("x")
 #print("Is x a variable?", type(x) == Variable)
 z = Variable("z")
@@ -252,7 +254,7 @@ print(app1)
 print(app1.reduce())
 
 # this implements ((λx.x) u)
-print("------------------------- identiteit voorbeeld")
+print("------------------------- identity function")
 identity = Abstraction(x, x)
 
 appliopid = Application(identity, u)
@@ -264,7 +266,7 @@ print(appliopid.reduce())
 
 
 # this implements ((λx.x) (λu.z))
-print("------------------------- twee lambda abstracties in een applicatie")
+print("------------------------- two lambda abstractions in an application")
 constant = Abstraction(u, z)
 
 appliopconst = Application(identity, constant)
@@ -275,7 +277,7 @@ print(appliopconst)
 print(appliopconst.reduce())
 
 # this implements ((λx.((λq.q) (λi.x)) (λu.z)), should print to (λi.(λu.z))
-print("------------------------- complex voorbeeld")
+print("------------------------- complicated example (application as body of abstraction)")
 
 VB1abs = Abstraction(q,q)
 VB2abs = Abstraction(i,x)
@@ -301,20 +303,57 @@ print(reducechecker(VB2app))
 
 # print(LambdaTerm.fromstring("(((λx.(λy.x)) z) u)"))
 
-
-print("------------------------- alpha conversion example")
+print("Alpha Conversion")
+print("------------------------- identity")
 print(identity)
 if (isinstance(identity, Abstraction)):
     print(identity.alphaconv([identity.head,z]))
 
 # the following implements ((λx.λy.x) y), this should be reduced to (λz.y) or some other variable than z (but not y)
-print("------------------------- alpha conversion example")
+print("------------------------- exception")
 alphabs1 = Abstraction(y,x)
 alphabs2 = Abstraction(x, alphabs1)
 
 print(alphabs2)
-print(alphabs2.alphaconv([identity.head,y]))
+print(alphabs2.alphaconv([alphabs2.head,y]))
 
 #alphapp1 = Application(vb2abs, y)
 
 #print(alphapp1.reduce())
+
+# We implement the lambda abstraction : (λx.(λx.x)), alphaconversion x -> y on outer lambda we get (λy.(λx.x))
+print("------------------------- exception")
+alphabs1 = Abstraction(x,x)
+alphabs2 = Abstraction(x,alphabs1)
+
+print(alphabs2)
+
+print(alphabs2.alphaconv([alphabs2.head, z])) #TODO
+
+print("------------------------- arithmetic")
+#0 = (λsz.z)        =(λs.(λz.z)
+#S = (λxyz.y(xyz))  =(λx.λy.λz.(y (x (y z)))
+
+
+abs1 = Abstraction(z,z)
+zero = Abstraction(s,abs1)
+
+app1 = Application(y, z)
+app2 = Application(x, app1)
+app3 = Application(y, app2)
+
+labs1 = Abstraction(z, app3)
+labs2 = Abstraction(y, labs1)
+successor = Abstraction(x, labs2)
+lijst =[]
+def lambnumber(number, n,s=[]):
+    if n != 0:
+        s = Application(successor, number)
+        lambnumber(s, n - 1, s)
+    else:
+        lijst.append(s)
+
+lambnumber(zero,3)
+s = lijst[0]
+
+print(s.reduce())
