@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 lam = chr(955)
 
-class LambdaTerm:
 
+class LambdaTerm:
     """Abstract Base Class for lambda terms."""
 
-    varchars = ['u','x','y','z']
+    varchars = ['u', 'x', 'y', 'z']
 
     # returns a lambda term created from the string argument
     # categorize lambda terms using brackets, working from outside in
@@ -63,9 +63,8 @@ class Variable(LambdaTerm):
 
     def reduce(self, rule):
         if self.var == rule[0]:
-            self.var = rule[1]
+            return rule[1]
         # TODO? use substitute instead or change sub to list, self.substitute(self, rule)
-        return self
 
 class Abstraction(LambdaTerm):
     """Represents a lambda term of the form (λx.M)."""
@@ -96,8 +95,7 @@ class Abstraction(LambdaTerm):
     def reduce(self, rule=[]):
         if len(rule) == 1: # no substitution yet, make a substitution rule from head and application rule
             rule = [self.head.var,rule[0]]
-        self.body = self.body.reduce(rule)
-        return self
+        return self.body.reduce(rule)
 
     def frstring(self, string):
         s1,s2 = string.split('.')
@@ -107,8 +105,6 @@ class Abstraction(LambdaTerm):
 
 class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
-
-    splitchar = ' '
 
     # create new application from two lambdaterms
     def __init__(self, lambdaterm, argument):
@@ -127,21 +123,22 @@ class Application(LambdaTerm):
     # (start) bèta-reduce
     def reduce(self, rule=[]):
         rule = [self.N] # pass on second lambdaterm as rule
-        self.M = self.M.reduce(rule)
-        return self.M # return the reduced first lambdaterm
+        return self.M.reduce(rule) # return the reduced first lambdaterm
 
     def frstring(self, string):
-        s1,s2 = string.split(' ')
+        s1, s2 = string.split(' ')
         self.M = self.M.fromstring(s1)
         self.N = self.N.fromstring(s2)
         return self
 
 # create lambdaterms
-# the following encodes the lambdaterm:  (((λx.(λy.x) z) u)
+# the following implements the lambdaterm:  (((λx.(λy.x) z) u)
+print("-------------------------")
+(q,w,e,r,t,y,u,i) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"))
 x = Variable("x")
-print("Is x a variable?", type(x) == Variable)
-u = Variable("u")
+#print("Is x a variable?", type(x) == Variable)
 z = Variable("z")
+
 abs1 = Abstraction("y", x)
 abs2 = Abstraction(x, abs1)
 
@@ -157,4 +154,32 @@ print(app2)
 print(app1.reduce())
 print(app2.reduce())
 
-print(LambdaTerm.fromstring("((((λx.(λy.x)) z) u)"))
+# print(LambdaTerm.fromstring("((((λx.(λy.x)) z) u)"))
+
+# this implements ((λx.x) u)
+print("-------------------------")
+identitity = Abstraction(x, x)
+
+appliopid = Application(identitity, u)
+
+print(identitity)
+print(appliopid)
+
+print(appliopid.reduce())
+
+print(identitity)
+
+
+# this implements ((λx.x) (λu.z))
+print("-------------------------")
+constant = Abstraction("y", z)
+
+appliopconst = Application(identitity, constant)
+
+print(constant)
+print(appliopconst)
+
+print(appliopconst.reduce())
+
+# this implements ((λx.((λq.q) (λi.x)) (λu.z))
+print("-------------------------")
