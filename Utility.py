@@ -61,7 +61,7 @@ def fromstring(string):
         lambdastring = Application.Application.frstring(string)
     # abstraction
     elif string[lpair + 1] == l and string[lpair + 2] == LambdaTerm.lam:
-        lambdastring = Abstraction.Abstraction.frstring()
+        lambdastring = Abstraction.Abstraction.frstring(string)
     # variable if all characters are correct
     else:
         for i in range(len(string)):
