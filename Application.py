@@ -35,10 +35,5 @@ class Application(LambdaTerm):
         return self
 
     # alpha conversion is conversion on components
-    def alphaconv(self,rule=[]):
-        return Application(self.M.alphaconv(rule),self.N.alphaconv(rule))
-
-    def findbound(self,boundvar):
-        # assume M is a lambda abstraction and N is a lambda term
-        if isinstance(self.M, Abstraction):
-            self.M.findbound(boundvar)
+    def alphaconv(self,rule=[],first=True):
+        return Application(self.M.alphaconv(rule,first),self.N.alphaconv(rule,first))

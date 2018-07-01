@@ -105,6 +105,7 @@ print(abs2.alphaconv([abs2.head,y]))
 print("------------------------- exception")
 abs = Abstraction(x,identity)
 
+print(abs)
 print(abs.alphaconv([abs.head, y]))
 
 # We implement the lambda abstraction : (λx.((λx.x) (λy.x)), alphaconversion x -> z on outer lambda we get (λz.((λx.x) (λy.z))
@@ -113,7 +114,6 @@ app = Application(identity,absyx)
 abs = Abstraction(x,app)
 
 print(abs)
-
 print(abs.alphaconv([abs.head, z]))
 
 """"

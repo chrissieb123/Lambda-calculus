@@ -21,5 +21,5 @@ class Variable(LambdaTerm):
     def reduce(self, rule=[]):
         return self
 
-    def alphaconv(self, rule=[]):
+    def alphaconv(self, rule=[], first=True):
         return self.substitute(rule)

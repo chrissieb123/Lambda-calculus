@@ -12,5 +12,5 @@ class LambdaTerm:
     def frstring(self, string):
         raise NotImplementedError
 
-    def alphaconv(self, rule=[]):
+    def alphaconv(self, rule=[], first=True):
         raise NotImplementedError
