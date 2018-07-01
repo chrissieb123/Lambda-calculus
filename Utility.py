@@ -42,7 +42,7 @@ def fromstring(string):
     l = '('
     r = ')'
 
-    # collect index pairs for every bracket
+    # collect index pairs for every bracket or print error if expression is invalid
     for s in enumerate(string, start=1):
         # find parentheses indices
         try:
@@ -55,19 +55,20 @@ def fromstring(string):
     # define indices of the second-to-last right parenthesis and corresponding left parenthesis
     rpair = indexpairs[-2][1]
     lpair = indexpairs[-2][0]
+    
+    # check if the expression is valid
+    for i in range(len(string)):
+        if string[i] not in varchars:
+            raise NameError
 
-    # application if space after second-to-last right bracket
-    if string[rpair + 1] == ' ':
+    # application if space before left bracket paired with second-to-last right bracket
+    if string[lpair - 1] == ' ':
         lambdastring = Application.Application.frstring(string)
     # abstraction
     elif string[lpair + 1] == l and string[lpair + 2] == LambdaTerm.lam:
-        lambdastring = Abstraction.Abstraction.frstring()
-    # variable if all characters are correct
-    else:
-        for i in range(len(string)):
-            if string[i] not in varchars:
-                raise NameError
-
+        lambdastring = Abstraction.Abstraction.frstring(string)
+    
+    # otherwise it is a variable
     return lambdastring
 
     '''
