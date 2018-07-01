@@ -34,9 +34,17 @@ class Abstraction(LambdaTerm):
         return Abstraction(self.head, self.body.reduce(rule))
 
     def frstring(self, string):
-        s1,s2 = string.split('.')
+        # separate body and head at the first dot
+        separated = list(string.partition("."))
+        s1 = separated[0][1:] # remove the first bracket
+        s2 = separated[2][:-1] # remove the last bracket
+        
         self.head = s1.lstrip(LambdaTerm.lam) # the head is what is between the lambda and the dot
         self.body = Utility.fromstring(s2) # body after the dot
+        
+        # s1,s2 = string.split('.')
+        # self.head = s1.lstrip(LambdaTerm.lam) # the head is what is between the lambda and the dot
+        # self.body = Utility.fromstring(s2) # body after the dot
         return self
 
     def alphaconv(self, rule=[], first=True):
