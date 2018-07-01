@@ -18,7 +18,6 @@ class LambdaTerm:
 
         # The indices of the open parentheses are stored in a stack, implemented
         # as a list
-
         stack = []
         parentheses_locs = {}
         for i, c in enumerate(s):
@@ -64,7 +63,7 @@ class LambdaTerm:
             lambdastring = Application.frstring(string)
         # abstraction
         elif string[lpair+1] == l and string[lpair+2] == lam:
-            lambdastring = Abstraction.frstring()
+            lambdastring = Abstraction.frstring(string)
         # variable if all characters are correct
         else:
             for i in range(len(string)):
