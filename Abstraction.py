@@ -42,11 +42,21 @@ class Abstraction(LambdaTerm):
     def alphaconv(self, rule=[]):
         boundvar = [] # search for bound variables
         self.findbound(boundvar)
-        # to do, replace condition below with: "intersection between FV(rule[1]) and boundvar = empty"
-        if rule[1] not in boundvar: # only convert if var to substitute it with is not bound
+        # TODO, replace condition below with: "intersection between FV(rule[1]) and boundvar = empty"
+
+        # if the variable is bound by another lambda in the body, convert the head and don't convert the body
+        for i in range(1,len(boundvar)):
+            print(boundvar)
+            bound = boundvar[i]
+            if str(bound) == str(self.head):
+                return Abstraction(self.head.alphaconv(rule), self.body)
+
+        # only convert if var to substitute it with is not bound
+        if rule[1] not in boundvar:
             return Abstraction(self.head.alphaconv(rule), self.body.alphaconv(rule))
-        else:
-            return (Utility.error())
+
+        # the input is incorrect
+        return (Utility.error())
 
     def findbound(self, boundvar):
         boundvar.append(self.head) # head is bound

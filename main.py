@@ -10,6 +10,12 @@ print("Bèta Reduction")
 
 # create variables
 (q,w,e,r,t,y,u,i,s,x,z) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"),Variable("s"),Variable("x"),Variable("z"))
+
+# handy lambda terms
+identity = Abstraction(x, x)
+absuz = Abstraction(u, z)
+absyx = Abstraction(y, x)
+
 #print("Is x a variable?", type(x) == Variable)
 
 print("------------------------- abstraction as body of an abstraction")
@@ -28,7 +34,6 @@ print("Call method on abstraction: ", abs2(z))
 
 # this implements ((λx.x) u)
 print("------------------------- identity function")
-identity = Abstraction(x, x)
 
 appliopid = Application(identity, u)
 
@@ -40,11 +45,10 @@ print(appliopid.reduce())
 
 # this implements ((λx.x) (λu.z))
 print("------------------------- two lambda abstractions in an application")
-constant = Abstraction(u, z)
 
-appliopconst = Application(identity, constant)
+appliopconst = Application(identity, absuz)
 
-print(constant)
+print(absuz)
 print(appliopconst)
 
 print(appliopconst.reduce())
@@ -54,7 +58,7 @@ print("------------------------- complicated example (application as body of abs
 
 VB1abs = Abstraction(q,q)
 VB2abs = Abstraction(i,x)
-VB3abs = constant
+VB3abs = absuz
 
 VB1app = Application(VB1abs,VB2abs)
 
@@ -87,11 +91,11 @@ if (isinstance(identity, Abstraction)):
 
 # the following implements ((λx.λy.x) y), this should be reduced to (λz.y) or some other variable than z (but not y)
 print("------------------------- exception")
-alphabs1 = Abstraction(y,x)
-alphabs2 = Abstraction(x, alphabs1)
+abs1 = Abstraction(y,x)
+abs2 = Abstraction(x, abs1)
 
-print(alphabs2)
-print(alphabs2.alphaconv([alphabs2.head,y]))
+print(abs2)
+print(abs2.alphaconv([abs2.head,y]))
 
 #alphapp1 = Application(vb2abs, y)
 
@@ -99,13 +103,20 @@ print(alphabs2.alphaconv([alphabs2.head,y]))
 
 # We implement the lambda abstraction : (λx.(λx.x)), alphaconversion x -> y on outer lambda we get (λy.(λx.x))
 print("------------------------- exception")
-alphabs1 = Abstraction(x,x)
-alphabs2 = Abstraction(x,alphabs1)
+abs = Abstraction(x,identity)
 
-print(alphabs2)
+print(abs.alphaconv([abs.head, y]))
 
-print(alphabs2.alphaconv([alphabs2.head, z])) #TODO
+# We implement the lambda abstraction : (λx.((λx.x) (λy.x)), alphaconversion x -> z on outer lambda we get (λz.((λx.x) (λy.z))
+print("------------------------- exception")
+app = Application(identity,absyx)
+abs = Abstraction(x,app)
 
+print(abs)
+
+print(abs.alphaconv([abs.head, z]))
+
+""""
 print("------------------------- arithmetic")
 #0 = (λsz.z)        =(λs.(λz.z)
 #S = (λxyz.y(xyz))  =(λx.λy.λz.(y (x (y z)))
@@ -133,3 +144,4 @@ lambnumber(zero,3)
 s = lijst[0]
 
 print(s.reduce())
+"""

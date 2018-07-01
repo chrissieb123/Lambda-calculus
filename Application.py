@@ -6,9 +6,10 @@ class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
 
     # create new application from two lambda terms
-    def __init__(self, lambdaterm, argument):
-        self.M = lambdaterm
-        self.N = argument
+    def __init__(self, lambdaterm1, lambdaterm2):
+        if isinstance(lambdaterm1, LambdaTerm) and isinstance(lambdaterm2, LambdaTerm):
+            self.M = lambdaterm1
+            self.N = lambdaterm2
 
     def __repr__(self):
         return "(" + str(self.M) + str(" ") + str(self.N) + ")"
@@ -33,8 +34,9 @@ class Application(LambdaTerm):
         self.N = Utility.fromstring(s2)
         return self
 
+    # alpha conversion is conversion on components
     def alphaconv(self,rule=[]):
-        return self
+        return Application(self.M.alphaconv(rule),self.N.alphaconv(rule))
 
     def findbound(self,boundvar):
         # assume M is a lambda abstraction and N is a lambda term
