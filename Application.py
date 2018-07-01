@@ -29,9 +29,17 @@ class Application(LambdaTerm):
             return Application(self.M.reduce, self.N.reduce)
 
     def frstring(self, string):
-        s1, s2 = string.split(' ')
-        self.M = Utility.fromstring(s1)
-        self.N = Utility.fromstring(s2)
+        # separate M and N at the last space
+        separated = list(string.rpartition(" "))
+        s1 = separated[0][1:] # remove the first bracket
+        s2 = separated[2][:-1] # remove the last bracket
+        
+        self.M = Utility.fromstring(s1) # recursion on M
+        self.N = Utility.fromstring(s2) # recursion on N
+
+        # s1, s2 = string.split(' ')
+        # self.M = Utility.fromstring(s1)
+        # self.N = Utility.fromstring(s2)
         return self
 
     # alpha conversion is conversion on components
