@@ -6,13 +6,12 @@ lamba = chr(955)
 
 
 def betareduction(lambdaterm, application):
-    # Firstly we have to lambda convert the term if neccessary
+    # first we have to lambda convert the term if necessary
 
-    # seperate body and head
-    seperate = list(lambdaterm.partition("."))
-
-    head = seperate[0]
-    body = list(seperate[2])
+    # separate body and head
+    separate = list(lambdaterm.partition("."))
+    head = separate[0]
+    body = list(separate[2])
 
     # find variable in expression λx.M
     variable = list(head.partition("λ"))[2]
@@ -29,13 +28,13 @@ def betareduction(lambdaterm, application):
 print(betareduction(betareduction(lam, "m"),"k"))
 
 def alphaconvert(lambdaterm, application):
-    # inititialise list of bound variables with indices
+    # initialise list of bound variables with indices
     BV = []
 
-    # initiialise lists of convertables in the appplication with indices
+    # initialise lists of convertables in the application with indices
     CA = []
 
-    # search for bound variables in the lambdterm and add them with indices to BV
+    # search for bound variables in the lambdaterm and add them with indices to BV
     for i in range(0, len(str(lambdaterm))-1):
         if str(lambdaterm)[i] == lamba:
             BV.append([str(lambdaterm)[i+1], i+1])
