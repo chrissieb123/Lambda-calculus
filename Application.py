@@ -10,6 +10,8 @@ class Application(LambdaTerm):
         if isinstance(lambdaterm1, LambdaTerm) and isinstance(lambdaterm2, LambdaTerm):
             self.M = lambdaterm1
             self.N = lambdaterm2
+        else:
+            raise TypeError
 
     def __repr__(self):
         return "(" + str(self.M) + str(" ") + str(self.N) + ")"
@@ -26,7 +28,7 @@ class Application(LambdaTerm):
             return self.M(self.N)
         # reduce M and N independently
         else:
-            return Application(self.M.reduce, self.N.reduce)
+            return Application(self.M.reduce(), self.N.reduce())
 
     def frstring(self, string):
         # separate M and N at the last space

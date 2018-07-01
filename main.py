@@ -66,15 +66,7 @@ VB4abs = Abstraction(x,VB1app)
 VB2app = Application(VB4abs, VB3abs)
 
 print(VB2app)
-
-def reducechecker(lambterm):
-    if str(lambterm.reduce()) != str(lambterm):
-        return reducechecker(lambterm.reduce())
-    else:
-        return lambterm
-
-
-print(reducechecker(VB2app))
+print(VB2app.fullreduce()) # (reduced twice)
 
 print("------------------------- abstraction reduce")
 print(VB4abs)

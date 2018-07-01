@@ -13,6 +13,8 @@ class Abstraction(LambdaTerm):
         if isinstance(var, Variable) and isinstance(body, LambdaTerm):
             self.head = var
             self.body = body
+        else:
+            raise TypeError
 
     def __repr__(self):
         return "(" + str(LambdaTerm.lam) + str(self.head) + "." + str(self.body) + ")"
