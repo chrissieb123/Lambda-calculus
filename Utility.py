@@ -56,8 +56,8 @@ def fromstring(string):
     rpair = indexpairs[-2][1]
     lpair = indexpairs[-2][0]
 
-    # application if space before second-to-last right bracket
-    if string[rpair - 1] == ' ':
+    # application if space before left bracket paired with second-to-last right bracket
+    if string[lpair - 1] == ' ':
         lambdastring = Application.Application.frstring(string)
     # abstraction
     elif string[lpair + 1] == l and string[lpair + 2] == LambdaTerm.lam:
