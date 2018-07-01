@@ -10,9 +10,7 @@ class Abstraction(LambdaTerm):
 
     # create an abstraction using a variable for the head and a lambda term for the body
     def __init__(self, var, body):
-        # check if the body is a lambda term
-        if isinstance(body, LambdaTerm) \
-                and isinstance(var, Variable):
+        if isinstance(var, Variable) and isinstance(body, LambdaTerm):
             self.head = var
             self.body = body
 
@@ -22,10 +20,10 @@ class Abstraction(LambdaTerm):
     def __str__(self):
         return "(" + str(LambdaTerm.lam) + str(self.head) + "." + str(self.body) + ")"
 
-    """# apply beta reduction when applying a lambda term to a lambda abstraction
-    def __call__(self, argument):
-        forcall = Application(self, argument)
-        forcall.reduce()"""
+    # apply beta reduction when applying a lambda term to a lambda abstraction
+    def __call__(self, sub):
+        rule = [self.head, sub]
+        return self.body.substitute(rule)
 
     # substitute lambda terms when it does not mean alpha conversion
     def substitute(self, rule):

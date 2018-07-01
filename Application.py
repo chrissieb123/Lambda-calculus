@@ -22,8 +22,7 @@ class Application(LambdaTerm):
     def reduce(self, rule=[]):
         # assume M is a lambda abstraction and N is a lambda term
         if isinstance(self.M, Abstraction):
-            rule = [self.M.head, self.N]
-            return self.M.body.substitute(rule)
+            return self.M(self.N)
         # reduce M and N independently
         else:
             return Application(self.M.reduce, self.N.reduce)

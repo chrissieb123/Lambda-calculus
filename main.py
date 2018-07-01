@@ -4,11 +4,17 @@ from Abstraction import Abstraction
 from Variable import Variable
 
 # create lambda terms
-# the following implements the lambda term:  (((λx.(λy.x) z) u)
+
+print("-------------------------")
 print("Bèta Reduction")
+
+# create variables
 (q,w,e,r,t,y,u,i,s,x,z) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"),Variable("s"),Variable("x"),Variable("z"))
 #print("Is x a variable?", type(x) == Variable)
 
+print("------------------------- abstraction as body of an abstraction")
+
+# the following implements the lambda term:  (((λx.(λy.x) z) u)
 abs1 = Abstraction(y, x)
 abs2 = Abstraction(x, abs1)
 
@@ -17,7 +23,8 @@ app2 = Application(app1, u)
 
 print(app1)
 
-print(app1.reduce())
+print("Reduce method on application: ", app1.reduce())
+print("Call method on abstraction: ", abs2(z))
 
 # this implements ((λx.x) u)
 print("------------------------- identity function")
@@ -52,7 +59,6 @@ VB3abs = constant
 VB1app = Application(VB1abs,VB2abs)
 
 VB4abs = Abstraction(x,VB1app)
-
 VB2app = Application(VB4abs, VB3abs)
 
 print(VB2app)
@@ -66,9 +72,13 @@ def reducechecker(lambterm):
 
 print(reducechecker(VB2app))
 
+print("------------------------- abstraction reduce")
+print(VB4abs)
+print(VB4abs.reduce())
 
 # print(LambdaTerm.fromstring("(((λx.(λy.x)) z) u)"))
 
+print("-------------------------")
 print("Alpha Conversion")
 print("------------------------- identity")
 print(identity)
