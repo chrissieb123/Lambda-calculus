@@ -48,14 +48,18 @@ class Abstraction(LambdaTerm):
         return self
 
     def alphaconv(self, rule=[], first=True):
+        # the input is incorrect if the substitute variable is ever bound
+        if str(self.head) == str(rule[1]):
+            print("Bad input.")
+            raise NotImplementedError
+
+        # ensure only the first bound occurence is converted
         # if this is the first abstraction that binds the to-be-substituted variable, set first to false
         if str(self.head) == str(rule[0]):
             if first:
                 first = False
-            else: # don't convert inner abstractions with the same head as the first abstraction
+            else: # don't convert other (inner) abstractions that bind the variable
                 return Abstraction(self.head,self.body)
-
-        # TODO: error, when head is the same as rule 1 
 
         # convert the head (substitute the variable) and body
         return Abstraction(self.head.alphaconv(rule),self.body.alphaconv(rule,first))

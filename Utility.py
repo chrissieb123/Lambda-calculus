@@ -3,8 +3,8 @@ import LambdaTerm, Abstraction, Application
 # define usable variable names
 varchars = ['u', 'x', 'y', 'z']
 
-def error():
-    return "Wrong input."
+class InputError(Exception):
+    pass
 
 def find_parentheses(s):
     """ Find and return the location of the matching parentheses pairs in s.
