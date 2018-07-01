@@ -51,7 +51,6 @@ class Abstraction(LambdaTerm):
         # the input is incorrect if the substitute variable is ever bound
         if str(self.head) == str(rule[1]):
             print("Bad input.")
-            raise NotImplementedError
 
         # ensure only the first bound occurence is converted
         # if this is the first abstraction that binds the to-be-substituted variable, set first to false
