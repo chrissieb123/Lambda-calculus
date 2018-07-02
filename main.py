@@ -124,9 +124,31 @@ print(app)
 print(app.fullreduce())
 
 print("------------------------- variable bound in application")
-app = Application(Abstraction(x,Abstraction(y,Application(x,y))),Application(x,y))
+abs = Abstraction(x,Abstraction(y,Application(x,y)))
+print(abs)
+print(abs.substitute([y,x]))
+
+print("------------------------- advanced example")
+h = Variable("h")
+abs = Abstraction(x,Abstraction(y,Application(Abstraction(x,Application(x,q)),h)))
+print(abs, "[h:= (x y)]")
+print(abs.substitute([h,Application(x,y)]))
+
+print("-------------------- reduce version: ---------------------")
+app = Application(Abstraction(h,abs),Application(x,y))
 print(app)
-print(app.fullreduce())
+
+print("reduce:")
+print(app.reduce())
+
+print("reduce:")
+print(app.reduce().reduce())
+
+print("------------------------- variable bound in application")
+abs = Abstraction(x,identity)
+app = Application(Abstraction(y,abs),x)
+print(app)
+print(Application(Abstraction(y,abs),x).fullreduce())
 
 """
 print("------------------------- arithmetic")

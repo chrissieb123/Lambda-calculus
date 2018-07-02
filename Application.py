@@ -49,5 +49,8 @@ class Application(LambdaTerm):
         return Application(self.M.alphaconv(rule,first),self.N.alphaconv(rule,first))
 
     def findbound(self, boundvar, freevar, headlist):
-        self.M.findbound(boundvar,freevar,headlist)
+        hl = headlist # headlist should be the same for both sides (head in M doesn't affect N)
+        self.M.findbound(boundvar,freevar,hl)
         self.N.findbound(boundvar,freevar,headlist)
+        #headlist = (headlist - hl) + (hl - headlist) # union of headlists
+        headlist = headlist + hl
