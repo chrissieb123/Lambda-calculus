@@ -1,12 +1,11 @@
 from Application import Application
 from Abstraction import Abstraction
 from Variable import Variable
-
+from Utility import fromstring
 # we use less cumbersome notation as defined in the report
 
-
 # we first inititialise a few many used functions and a list of workable variables
-(q,w,e,r,t,y,u,i,s,x,z,a,b,c) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"),Variable("s"),Variable("x"),Variable("z"),Variable("a"),Variable("b"),Variable("c"))
+(q,w,e,r,t,y,u,i,s,x,z,a,b,c,p) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"),Variable("s"),Variable("x"),Variable("z"),Variable("a"),Variable("b"),Variable("c"), Variable("p"))
 zidentity = Abstraction(z, z)
 absxy = Abstraction(x, y)
 absyz = Abstraction(y,z)
@@ -40,23 +39,48 @@ lambTrue = Abstraction(x,tabs1)
 fabs1 = Abstraction(y,y)
 lambFalse = Abstraction(x,fabs1)
 
+
 #  the following implements the And operator, λxy.xy(λuv.v) or with eta-equivalence, λxy.xyF
 aapp1 = Application(x,y)
 aapp2 = Application(aapp1,lambFalse)
 aabs1 = Abstraction(y,aapp2)
 lambAnd = Abstraction(x,aabs1)
+
 #  the following implements the Or operator, λxy.x(λuv.u)y or with eta-equivalence, λxy.xTy
 oapp1 = Application(x,lambTrue)
+oapp2 = Application(oapp1,y)
+oabs1 = Abstraction(y,oapp2)
+lambOr = Abstraction(x,oabs1)
+
 #  the following implements the Not operator, λx.x(λuv.v)(λab.a) or with eta-equivalence, λxy.xFT
+napp1 = Application(x,lambFalse)
+napp2 = Application(napp1,lambTrue)
+nabs1 = Abstraction(y,napp2)
+lambNot = Abstraction(x,nabs1)
 
 
 # te following implements a pair, (λz.zab)
+papp1 = Application(z,a)
+papp2 = Application(papp1,b)
+lambPair = Abstraction(z,papp2)
+print(lambPair)
 
 # the following implements Q,
 #  where Q creates a new pair from a pair in which the first is the successor of second,
 # Q is eta-equivalent to (λpz.z(S(pT))(pT))
-
-# the following implements the predessecor function P, which is the -1 operator, (λn.nQ(λz.z00))F
+qapp1 = Application(p,lambTrue)
+qapp2 = Application(successor,qapp1)
+qapp3 = Application(z,qapp2)
+qabs1 = Abstraction(z,qapp3)
+lambQ = Abstraction(p,qabs1)
+print(lambQ)
+# the following implements the predessecor function P, which is the -1 operator, λn.(nQ(λz.z00))F)
+prapp1 = Application(i,lambQ)
+prapp2 = Application(z,zero)
+prapp3 = Application(prapp2,zero)
+prapp4 = Application(prapp3,lambFalse)
+lambPredecessor = Abstraction(i,prapp4)
+print(lambPredecessor)
 
 
 class lambnumber(Abstraction):
