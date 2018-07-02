@@ -14,6 +14,7 @@ class Abstraction(LambdaTerm):
             self.head = var
             self.body = body
         else:
+            print(type(var), type(body))
             raise TypeError
 
     def __repr__(self):
@@ -31,6 +32,8 @@ class Abstraction(LambdaTerm):
     def substitute(self, rule):
         if str(self.head) != str(rule[0]): # we should also check if this is a legitimate substitution
             return Abstraction(self.head, self.body.substitute(rule))
+        else:
+            return self
 
     def reduce(self, rule=[]):
         return Abstraction(self.head, self.body.reduce(rule))
