@@ -35,4 +35,4 @@ class Variable(LambdaTerm):
         return self.alphaconv(rule,first)
 
     def varlist(self):
-        return self
+        return [self]

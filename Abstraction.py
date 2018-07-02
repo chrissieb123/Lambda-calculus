@@ -77,8 +77,9 @@ class Abstraction(LambdaTerm):
         for j in range (0,len(chars)):
             print("rule: ", [newrule0,newrule1])
             print("alphconv: ", self.alphaconv([newrule0,newrule1]))
+            print("varlist: ", self.varlist())
 
-            if newrule1 not in self.varlist:
+            if newrule1 not in self.varlist():
                 if first:
                     first = False
                     newrule0 = self.head
