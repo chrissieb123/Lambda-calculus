@@ -6,7 +6,7 @@ from Variable import Variable
 # create lambda terms
 
 print("-------------------------")
-print("Bèta Reduction")
+print("Bèta-Reduction")
 
 # create variables
 (q,w,e,r,t,y,u,i,s,x,z) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"),Variable("s"),Variable("x"),Variable("z"))
@@ -75,12 +75,13 @@ print(VB4abs.reduce())
 # print(LambdaTerm.fromstring("(((λx.(λy.x)) z) u)"))
 
 print("-------------------------")
-print("Alpha Conversion")
+print("Alpha-Conversion")
 print("------------------------- identity")
 print(identity)
 if (isinstance(identity, Abstraction)):
     print(identity.alphaconv([identity.head,z]))
 
+"""
 # the following implements ((λx.λy.x) y), this should be reduced to (λz.y) or some other variable than z (but not y)
 print("------------------------- exception")
 abs1 = Abstraction(y,x)
@@ -92,23 +93,36 @@ print(abs2.alphaconv([abs2.head,y]))
 #alphapp1 = Application(vb2abs, y)
 
 #print(alphapp1.reduce())
+"""
 
 # We implement the lambda abstraction : (λx.(λx.x)), alphaconversion x -> y on outer lambda we get (λy.(λx.x))
-print("------------------------- exception")
+print("------------------------- multiple same heads")
 abs = Abstraction(x,identity)
 
 print(abs)
 print(abs.alphaconv([abs.head, y]))
 
 # We implement the lambda abstraction : (λx.((λx.x) (λy.x)), alphaconversion x -> z on outer lambda we get (λz.((λx.x) (λy.z))
-print("------------------------- exception")
+print("------------------------- variable bound in application")
 app = Application(identity,absyx)
 abs = Abstraction(x,app)
 
 print(abs)
 print(abs.alphaconv([abs.head, z]))
 
-""""
+print("------------------------- ")
+print("Bèta-reduce with alpha-conversion")
+
+# Implements the application: ((λx.(λy.(x y))) (x y)), alpha-converts the x's in identity to a random variable and then reduces to: (λq.((x y) q))
+print("------------------------- variable bound in application")
+
+app = Application(Abstraction(x,Abstraction(y,Application(x,y))),Application(x,y))
+print(app)
+#print(app.reduce())
+print(app.fullreduce())
+
+
+"""
 print("------------------------- arithmetic")
 #0 = (λsz.z)        =(λs.(λz.z)
 #S = (λxyz.y(xyz))  =(λx.λy.λz.(y (x (y z)))

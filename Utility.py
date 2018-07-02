@@ -1,7 +1,7 @@
 import LambdaTerm, Abstraction, Application
 
 # define usable variable names
-varchars = ['u', 'x', 'y', 'z']
+varchars = LambdaTerm.LambdaTerm.varchar
 
 class InputError(Exception):
     pass

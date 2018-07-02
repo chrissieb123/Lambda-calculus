@@ -1,5 +1,7 @@
 class LambdaTerm:
     lam = chr(955)
+    varchar = "qwertyuiopasdfghjklzxcvbnm"
+
     """Abstract Base Class for lambda terms."""
 
     # define a substitution function, which receives a lambda term and a dictionary of replacements
@@ -24,5 +26,8 @@ class LambdaTerm:
         # in other words, the term and reduced term are not the same
         while str(lambdaterm.reduce()) != str(lambdaterm):
             lambdaterm = lambdaterm.reduce() # keep reducing until they are the sam
-
         return lambdaterm
+
+    # find bound variables in the lambda term
+    def findbound(self, boundvar, freevar, headlist):
+        raise NotImplementedError

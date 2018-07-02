@@ -23,3 +23,12 @@ class Variable(LambdaTerm):
 
     def alphaconv(self, rule=[], first=True):
         return self.substitute(rule)
+
+    def findbound(self, boundvar, freevar, headlist):
+        strvar = self.var
+        if strvar in headlist:  # a variable is bound if it is in one of the previous head variables
+            boundvar.append(strvar)
+            #print("boundvar: ", boundvar)
+        else:
+            freevar.append(strvar)
+            #print("freevar: ", freevar)

@@ -47,3 +47,7 @@ class Application(LambdaTerm):
     # alpha conversion is conversion on components
     def alphaconv(self,rule=[],first=True):
         return Application(self.M.alphaconv(rule,first),self.N.alphaconv(rule,first))
+
+    def findbound(self, boundvar, freevar, headlist):
+        self.M.findbound(boundvar,freevar,headlist)
+        self.N.findbound(boundvar,freevar,headlist)
