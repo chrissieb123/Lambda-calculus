@@ -16,7 +16,7 @@ class LambdaTerm:
         raise NotImplementedError
 
     # alpha-conversion
-    def alphaconv(self, rule=[], first=True):
+    def alphaconv(self, rule, first=True):
         raise NotImplementedError
 
     # returns the completely reduced version of this lambda term
@@ -29,5 +29,8 @@ class LambdaTerm:
         return lambdaterm
 
     # find bound variables in the lambda term
-    def findbound(self, boundvar, freevar, headlist):
+    def freevar(self, headlist):
+        raise NotImplementedError
+
+    def tryslpha(self, rule, first=True):
         raise NotImplementedError

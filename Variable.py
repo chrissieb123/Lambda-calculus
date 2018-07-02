@@ -21,14 +21,18 @@ class Variable(LambdaTerm):
     def reduce(self, rule=[]):
         return self
 
-    def alphaconv(self, rule=[], first=True):
+    def alphaconv(self, rule, first=True):
         return self.substitute(rule)
 
-    def findbound(self, boundvar, freevar, headlist):
+    def freevar(self, headlist):
         strvar = self.var
-        if strvar in headlist:  # a variable is bound if it is in one of the previous head variables
-            boundvar.append(strvar)
-            #print("boundvar: ", boundvar)
-        else:
-            freevar.append(strvar)
+        if strvar not in headlist:  # a variable is bound if it is in one of the previous head variables
+            return [strvar]
             #print("freevar: ", freevar)
+        else: return []
+
+    def tryalpha(self, rule, first=True):
+        return self.alphaconv(rule,first)
+
+    def varlist(self):
+        return self

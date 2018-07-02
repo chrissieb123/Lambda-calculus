@@ -44,13 +44,19 @@ class Application(LambdaTerm):
         # self.N = Utility.fromstring(s2)
         return self
 
+
     # alpha conversion is conversion on components
-    def alphaconv(self,rule=[],first=True):
+    def alphaconv(self,rule,first=True):
         return Application(self.M.alphaconv(rule,first),self.N.alphaconv(rule,first))
 
-    def findbound(self, boundvar, freevar, headlist):
+    def freevar(self, headlist):
         hl = headlist # headlist should be the same for both sides (head in M doesn't affect N)
-        self.M.findbound(boundvar,freevar,hl)
-        self.N.findbound(boundvar,freevar,headlist)
+        return self.M.freevar(hl) + self.N.freevar(headlist)
         #headlist = (headlist - hl) + (hl - headlist) # union of headlists
-        headlist = headlist + hl
+        #headlist = headlist +
+
+    def tryalpha(self, rule, first=True):
+        return Application(self.M.tryalpha(rule,first),self.N.tryalpha(rule,first))
+
+    def varlist(self):
+        return self.M.varlist() + self.N.varlist()

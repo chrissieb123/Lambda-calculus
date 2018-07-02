@@ -140,6 +140,11 @@ app = Application(Abstraction(h,abs),Application(x,y))
 print(app)
 print(app.fullreduce())
 
+print("------------------------- test")
+abs = Abstraction(x,Abstraction(y,q))
+print(abs)
+print(abs.substitute([q,Application(x,z)]))
+
 """
 print("------------------------- arithmetic")
 #0 = (λsz.z)        =(λs.(λz.z)
