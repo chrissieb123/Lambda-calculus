@@ -1,6 +1,7 @@
 from LambdaTerm import LambdaTerm
 from Abstraction import Abstraction
 import Utility
+from copy import copy
 
 class Application(LambdaTerm):
     """Represents a lambda term of the form (M N)."""
@@ -45,9 +46,11 @@ class Application(LambdaTerm):
     def alphaconv(self,rule=[],first=True):
         return Application(self.M.alphaconv(rule,first),self.N.alphaconv(rule,first))
 
-    def findbound(self, boundvar, freevar, headlist):
-        hl = headlist # headlist should be the same for both sides (head in M doesn't affect N)
-        self.M.findbound(boundvar,freevar,hl)
-        self.N.findbound(boundvar,freevar,headlist)
-        #headlist = (headlist - hl) + (hl - headlist) # union of headlists
-        headlist = headlist + hl
+    def freevar(self, headlist):
+        hl = copy(headlist) # headlist should be the same for both sides (head in M doesn't affect N)
+        return self.M.freevar(hl) + self.M.freevar(headlist)
+
+    def tryalpha(self, rule, first=True):
+        return Application(self.M.tryalpha(rule,first),self.N.tryalpha(rule,first))
+
+
