@@ -57,7 +57,7 @@ class Abstraction(LambdaTerm):
     def alphaconv(self, rule=[], first=True):
         # the input is incorrect if the substitute variable is ever bound
         if str(self.head) == str(rule[1]):
-            print("Bad input.")
+            #print("Bad input.")
             raise NotImplementedError
 
         # ensure only the first bound occurence is converted
@@ -73,31 +73,50 @@ class Abstraction(LambdaTerm):
 
     # check if bèta-reduction can be done, do alpha-conversion if this is not the case, return converted abstraction
     def alphreduce(self, rule):
+
+        # initialize lists
         boundvar1,freevar1,headlist1 = ([],[],[])
         boundvar2,freevar2,headlist2 = ([],[],[])
-        self.findbound(boundvar1,freevar1,headlist1)
-        #print("Lambda term: ", self, ", Boundvar: ", boundvar1 )
-        rule[1].findbound(boundvar2,freevar2,headlist2)
-        #print("Lambda term: ", rule[1], ", Freevar: ", freevar2)
 
-        for i in range (0, len(boundvar1)):
-            if boundvar1[i] in freevar2:
+        # look for bound variables in the abstraction and free variables in the rule
+        self.findbound(boundvar1,freevar1,headlist1)
+        #print("Lambda term: ", self, ", Boundvar: ", boundvar1, ", Freevar: ", freevar1, ", Headlist: ", headlist1)
+        rule[1].findbound(boundvar2,freevar2,headlist2)
+        #print("Lambda term: ", rule[1], ", Boundvar: ", boundvar2, ", Freevar: ", freevar2, ", Headlist: ", headlist2)
+
+        return self.tryalpha(self, headlist1, freevar1, freevar2)
+
+    def tryalpha(self, lambdaterm, headlist1, freevar1, freevar2):
+        #print("Lambda term: ", lambdaterm, ", Headlist: ", headlist1, ", Freevar1: ", freevar1, ", Freevar2: ", freevar2)
+        # alpha convert if bound variable is free in the rule
+        for i in range (0, len(headlist1)):
+            if headlist1[i] in freevar2:
                 # do alpha-conversion with the next variable character until it works
                 j = 0
-                while j < len(LambdaTerm.varchar):
+                while True:
                     try:
-                        strvar = LambdaTerm.varchar[j]
+                        # make variables from strings
+                        char = LambdaTerm.varchar[j]
+                        tryvar = Variable(LambdaTerm.varchar[j])
+                        vheadlist1 = Variable(headlist1[i])
+
+                        # alpha-convert, substituting the bound variable
+                        lambdaterm.alphaconv([vheadlist1, tryvar])
+                        #print(lambdaterm.alphaconv([vheadlist1, tryvar]))
+
+                        if (char in freevar1): # make sure new variable doesn't bind a free variable
+                            #print("New variable binds free variable.")
+                            raise NotImplementedError
+
                     except NotImplementedError:
+                        if (j == len(LambdaTerm.varchar)):
+                            print("Too few characters to alpha convert.")
+                            raise NotImplementedError
                         j+=1
                         continue
-
-                    vboundvar1 = Variable(boundvar1[i])
-                    tryvar = Variable(strvar)
-
-                    # alpha-convert, substituting the bound variable
-                    return Abstraction(self.head.alphaconv([vboundvar1,tryvar]),self.body.alphaconv([vboundvar1,tryvar]))
-
-        return self
+                    break
+                lambdaterm = lambdaterm.alphaconv([vheadlist1, tryvar])
+        return lambdaterm
 
     def findbound(self, boundvar, freevar, headlist):
         headlist.append(str(self.head)) # keep up a list with all the head variables

@@ -116,11 +116,11 @@ class lambnumber(Abstraction):
 zero = lambnumber(0)
 een = lambnumber(1)
 twee = lambnumber(2)
+print(twee)
 drie = lambnumber(3)
-twintig = lambnumber(20)
-print(twintig + twintig)
+print(drie)
 
-print(twintig * twee)
+#print(twintig * twee)
 
 
 
