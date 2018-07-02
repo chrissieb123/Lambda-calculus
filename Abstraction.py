@@ -14,6 +14,7 @@ class Abstraction(LambdaTerm):
             self.head = var
             self.body = body
         else:
+            print(type(var), type(body))
             raise TypeError
 
     def __repr__(self):
