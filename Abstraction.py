@@ -49,9 +49,6 @@ class Abstraction(LambdaTerm):
         self.head = s1.lstrip(LambdaTerm.lam) # the head is what is between the lambda and the dot
         self.body = Utility.fromstring(s2) # body after the dot
         
-        # s1,s2 = string.split('.')
-        # self.head = s1.lstrip(LambdaTerm.lam) # the head is what is between the lambda and the dot
-        # self.body = Utility.fromstring(s2) # body after the dot
         return self
 
     def alphaconv(self, rule=[], first=True):
