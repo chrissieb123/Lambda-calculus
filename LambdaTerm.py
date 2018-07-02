@@ -1,6 +1,6 @@
 class LambdaTerm:
     lam = chr(955)
-    varchar = "qwertyuiopasdfghjklzxcvbnm"
+    varchar = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
 
     """Abstract Base Class for lambda terms."""
 

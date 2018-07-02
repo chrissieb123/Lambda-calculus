@@ -114,41 +114,31 @@ print(abs)
 print(abs.alphaconv([abs.head, z]))
 
 print("------------------------- ")
-print("Bèta-reduce with alpha-conversion")
+print("Alpha-conversion for bad substitution (rule 5)")
 print("------------------------- ")
 
 # Implements the application: ((λx.(λy.(x y))) (x y)), alpha-converts the x's in identity to a random variable and then reduces to: (λq.((x y) q))
-print("------------------------- variable bound in application")
+print("------------------------- reduction with variable bound in application")
 app = Application(Abstraction(x,Abstraction(y,Application(x,y))),Application(x,y))
 print(app)
 print(app.fullreduce())
 
-print("------------------------- variable bound in application")
-abs = Abstraction(x,Abstraction(y,Application(x,y)))
-print(abs)
-print(abs.substitute([y,x]))
+print("------------------------- multiple layers")
+abs = Abstraction(x,identity)
+app = Application(Abstraction(y,abs),x)
+print(app)
+print(Application(Abstraction(y,abs),x).fullreduce())
 
-print("------------------------- advanced example")
+print("------------------------- advanced example (using substitution)")
 h = Variable("h")
 abs = Abstraction(x,Abstraction(y,Application(Abstraction(x,Application(x,q)),h)))
 print(abs, "[h:= (x y)]")
 print(abs.substitute([h,Application(x,y)]))
 
-print("-------------------- reduce version: ---------------------")
+print("------------------------- last example fully reduced")
 app = Application(Abstraction(h,abs),Application(x,y))
 print(app)
-
-print("reduce:")
-print(app.reduce())
-
-print("reduce:")
-print(app.reduce().reduce())
-
-print("------------------------- variable bound in application")
-abs = Abstraction(x,identity)
-app = Application(Abstraction(y,abs),x)
-print(app)
-print(Application(Abstraction(y,abs),x).fullreduce())
+print(app.fullreduce())
 
 """
 print("------------------------- arithmetic")

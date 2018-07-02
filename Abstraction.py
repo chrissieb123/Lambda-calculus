@@ -57,7 +57,7 @@ class Abstraction(LambdaTerm):
     def alphaconv(self, rule=[], first=True):
         # the input is incorrect if the substitute variable is ever bound
         if str(self.head) == str(rule[1]):
-            print("Bad input.")
+            #print("Bad input.")
             raise NotImplementedError
 
         # ensure only the first bound occurence is converted
@@ -87,7 +87,7 @@ class Abstraction(LambdaTerm):
         return self.tryalpha(self, headlist1, freevar1, freevar2)
 
     def tryalpha(self, lambdaterm, headlist1, freevar1, freevar2):
-        print("Lambda term: ", lambdaterm, ", Headlist: ", headlist1, ", Freevar1: ", freevar1, ", Freevar2: ", freevar2)
+        #print("Lambda term: ", lambdaterm, ", Headlist: ", headlist1, ", Freevar1: ", freevar1, ", Freevar2: ", freevar2)
         # alpha convert if bound variable is free in the rule
         for i in range (0, len(headlist1)):
             if headlist1[i] in freevar2:
@@ -102,10 +102,10 @@ class Abstraction(LambdaTerm):
 
                         # alpha-convert, substituting the bound variable
                         lambdaterm.alphaconv([vheadlist1, tryvar])
-                        print(lambdaterm.alphaconv([vheadlist1, tryvar]))
+                        #print(lambdaterm.alphaconv([vheadlist1, tryvar]))
 
                         if (char in freevar1): # make sure new variable doesn't bind a free variable
-                            print("New variable binds free variable.")
+                            #print("New variable binds free variable.")
                             raise NotImplementedError
 
                     except NotImplementedError:
