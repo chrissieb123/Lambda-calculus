@@ -37,12 +37,10 @@ def find_parentheses(s):
 # returns a lambda term created from the string argument
 # categorize lambda terms using brackets, working from outside in
 def fromstring(string):
-    # define characters for later convenience
+    # initialise return string
     lambdastring = ''
-    l = '('
-    r = ')'
 
-    # collect index pairs for every bracket or print error if expression is invalid
+    # collect index pairs for every parenthesis or print error if expression is invalid
     for s in enumerate(string, start=1):
         # find parentheses indices
         try:
@@ -52,47 +50,25 @@ def fromstring(string):
         except IndexError as e:
             print(str(e))
 
-    # define indices of the second-to-last right parenthesis and corresponding left parenthesis
-    rpair = indexpairs[-2][1]
-    lpair = indexpairs[-2][0]
-    
     # check if the expression is valid
     for i in range(len(string)):
         if string[i] not in varchars:
             raise NameError
-
-    # application if space before left bracket paired with second-to-last right bracket
-    if string[lpair - 1] == ' ':
-        lambdastring = Application.Application.frstring(string)
-    # abstraction
-    elif string[lpair + 1] == l and string[lpair + 2] == LambdaTerm.lam:
-        lambdastring = Abstraction.Abstraction.frstring(string)
+            
+    # define indices of the last pair of parentheses (for the 'N' term)
+    # the N-term in the application (M N) has parentheses around the expression as well (i.e. N = (N'))
+    rpair = indexpairs[-1][1]
+    lpair = indexpairs[-1][0]
     
-    # otherwise it is a variable
+    # application if there is a space before left bracket paired with second-to-last right bracket
+    if len(indexpairs) < 2 and string[lpair - 1] == ' ':
+        lambdastring = Application.Application.frstring(string)
+    # abstraction if there is a lambda right after the left parenthesis
+    elif string[lpair + 1] == LambdaTerm.lam:
+        lambdastring = Abstraction.Abstraction.frstring(string)
+    # if it is not an Application nor an Abstraction, it is a Variable; remove the outer brackets first
+    else:
+        lambdastring = Variable.Variable(lambdastring[1:-1])
+
     return lambdastring
 
-    '''
-    # find most right bracket after removing outer brackets
-    string.strip(r)
-    nextr = string.rfind(r)
-
-    # application if space after bracket
-    if string[nextr+1] == ' ':
-        lamdbdat = Application.frstring(string)
-    # 
-    else:
-        # the corresponding left bracket
-        nextl = string[len(string)-nextr-1]
-
-        # abstraction if (λ follows bracket
-        if string[nextl+1] == l and string[nextl+2] == lam:
-            lambdat = Abstraction.frstring()
-    # variabele als alle karakters correct zijn
-    else: # Correct variable if all the characters in it are correct characters
-            for i in range(len(string)):
-                if string[i] not in varchars: # if there is an incorrect character, stop and raise exception
-                    raise NameError
-            lambdat = Variable(string)
-
-    return lambdat
-    '''

@@ -38,18 +38,16 @@ class Application(LambdaTerm):
         
         self.M = Utility.fromstring(s1) # recursion on M
         self.N = Utility.fromstring(s2) # recursion on N
+
         return self
 
-
     # alpha conversion is conversion on components
-    def alphaconv(self,rule,first=True):
+    def alphaconv(self,rule=[],first=True):
         return Application(self.M.alphaconv(rule,first),self.N.alphaconv(rule,first))
 
-    def freevar(self, headlist):
+    def findbound(self, boundvar, freevar, headlist):
         hl = headlist # headlist should be the same for both sides (head in M doesn't affect N)
-        return self.M.freevar(hl) + self.N.freevar(headlist)
+        self.M.findbound(boundvar,freevar,hl)
+        self.N.findbound(boundvar,freevar,headlist)
         #headlist = (headlist - hl) + (hl - headlist) # union of headlists
-        #headlist = headlist +
-
-    def tryalpha(self, rule, first=True):
-        return Application(self.M.tryalpha(rule,first),self.N.tryalpha(rule,first))
+        headlist = headlist + hl
