@@ -28,9 +28,10 @@ class LambdaTerm:
             lambdaterm = lambdaterm.reduce() # keep reducing until they are the sam
         return lambdaterm
 
-    # find bound variables in the lambda term
+    # find free variables in the lambda term
     def freevar(self, headlist):
         raise NotImplementedError
 
-    def tryslpha(self, rule, first=True):
+    # check if alpha-conversion is ok, return converted lambda term
+    def tryalpha(self, rule, first=True):
         raise NotImplementedError

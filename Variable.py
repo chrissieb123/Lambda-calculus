@@ -12,6 +12,7 @@ class Variable(LambdaTerm):
     def __str__(self):
         return self.var
 
+    # substitute if variable matches rule
     def substitute(self, rule):
         if self.var == rule[0].var:
             return rule[1]
@@ -28,11 +29,8 @@ class Variable(LambdaTerm):
         strvar = self.var
         if strvar not in headlist:  # a variable is bound if it is in one of the previous head variables
             return [strvar]
-            #print("freevar: ", freevar)
-        else: return []
+        else:
+            return []
 
     def tryalpha(self, rule, first=True):
         return self.alphaconv(rule,first)
-
-    def varlist(self):
-        return self

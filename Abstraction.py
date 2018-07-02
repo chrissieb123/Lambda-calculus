@@ -33,7 +33,6 @@ class Abstraction(LambdaTerm):
         if str(self.head) != str(rule[0]): # check if this is a legitimate substitution
             # alpha convert until reducible first (substitution rule 5)
             alph = self.tryalpha(rule)
-            print("alph: ", alph)
             return Abstraction(alph.head, alph.body.substitute(rule))
         else:
             return self
@@ -67,18 +66,35 @@ class Abstraction(LambdaTerm):
         # convert the head (substitute the variable) and body
         return Abstraction(self.head.alphaconv(rule),self.body.alphaconv(rule,first))
 
+    def freevar(self, headlist):
+        headlist.append(str(self.head)) # keep up a list with all the head variables
+        return self.body.freevar(headlist) # continue in the body
+
     # check if alpha-conversion is ok, do alpha-conversion on the head to a different variable if not the case, return converted abstraction
-    def tryalpha(self,rule,first=True):
+    def tryalpha(self, rule,first=True):
         newrule0 = rule[0]
         newrule1 = rule[1]
-
         # do alpha-conversion with the next variable character until it works
         chars = LambdaTerm.varchar
         for j in range (0,len(chars)):
-            print("rule: ", [newrule0,newrule1])
-            print("alphconv: ", self.alphaconv([newrule0,newrule1]))
+            #print("rule: ", [newrule0,newrule1])
+            #print("alphconv: ", self.alphaconv([newrule0,newrule1]))
 
-            if newrule1 not in self.varlist:
+            cont = False
+
+            # the input is incorrect if the head is in free variables of the substitute
+            if str(self.head) in newrule1.freevar([]):
+                #print("Bad input: {} is in {}".format(self.head, newrule1.freevar([])))
+                if first:
+                    first = False
+                    newrule0 = self.head
+                cont = True
+
+            if (not first) and str(newrule1) in self.body.freevar([]): # new head shouldn't bind variables
+                #print("New head binds free var: {} in {}".format(newrule1,self.body.freevar([])))
+                cont = True
+
+            if cont:
                 if first:
                     first = False
                     newrule0 = self.head
@@ -91,50 +107,3 @@ class Abstraction(LambdaTerm):
             return self
         else: # return the alpha-equivalent alpha-converted abstraction
             return self.alphaconv([newrule0,newrule1])
-
-    def freevar(self, headlist):
-        headlist.append(str(self.head)) # keep up a list with all the head variables
-        return self.body.freevar(headlist) # continue in the body
-
-    def varlist(self):
-        return self.body.varlist()
-
-    """
-        # check if alpha-conversion is ok, do alpha-conversion on the head to a different variable if not the case, return converted abstraction
-        def tryalpha(self, rule,first=True):
-            newrule0 = rule[0]
-            newrule1 = rule[1]
-            # do alpha-conversion with the next variable character until it works
-            chars = LambdaTerm.varchar
-            for j in range (0,len(chars)):
-                print("rule: ", [newrule0,newrule1])
-                print("alphconv: ", self.alphaconv([newrule0,newrule1]))
-
-                cont = False
-
-                # the input is incorrect if the head is in free variables of the substitute
-                if str(self.head) in newrule1.freevar([]):
-                    print("Bad input: {} is in {}".format(self.head, newrule1.freevar([])))
-                    if first:
-                        first = False
-                        newrule0 = self.head
-                    cont = True
-
-                if (not first) and str(newrule1) in self.body.freevar([]): # new head shouldn't bind variables
-                    print("New head binds free var: {} in {}".format(newrule1,self.body.freevar([])))
-                    cont = True
-
-                if cont:
-                    if first:
-                        first = False
-                        newrule0 = self.head
-                    newrule1 = Variable(chars[j]) # make variable from string and use as new substitute
-                    continue
-                else:
-                    break
-
-            if first: # nothing wrong with the alpha-conversion
-                return self
-            else: # return the alpha-equivalent alpha-converted abstraction
-                return self.alphaconv([newrule0,newrule1])
-    """

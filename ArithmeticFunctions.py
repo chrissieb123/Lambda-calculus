@@ -109,7 +109,13 @@ class lambnumber(Abstraction):
     def __mul__(self, other):
         d = Application(multiplication, self)
         d = Application(d, other)
-        return d.fullreduce()
+        d = d.fullreduce()
+
+        dummy = lambnumber(0)
+        dummy.head = d.head
+        dummy.body = d.body
+        dummy.number = self.number * other.number
+        return dummy
 
 
 

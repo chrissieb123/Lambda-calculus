@@ -38,10 +38,6 @@ class Application(LambdaTerm):
         
         self.M = Utility.fromstring(s1) # recursion on M
         self.N = Utility.fromstring(s2) # recursion on N
-
-        # s1, s2 = string.split(' ')
-        # self.M = Utility.fromstring(s1)
-        # self.N = Utility.fromstring(s2)
         return self
 
 
@@ -57,6 +53,3 @@ class Application(LambdaTerm):
 
     def tryalpha(self, rule, first=True):
         return Application(self.M.tryalpha(rule,first),self.N.tryalpha(rule,first))
-
-    def varlist(self):
-        return self.M.varlist() + self.N.varlist()
