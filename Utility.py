@@ -66,8 +66,9 @@ def fromstring(string):
     # abstraction if there is a lambda right after the left parenthesis
     elif string[lpair + 1] == LambdaTerm.lam:
         lambdastring = Abstraction.Abstraction.frstring(string)
-    
-    # it is a variable; remove the outer brackets before returning
-    lambdastring = lambdastring[1:-1]
+    # if it is not an Application nor an Abstraction, it is a Variable; remove the outer brackets first
+    else:
+        lambdastring = Variable.Variable(lambdastring[1:-1])
+
     return lambdastring
 
