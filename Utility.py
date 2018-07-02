@@ -52,23 +52,27 @@ def fromstring(string):
         except IndexError as e:
             print(str(e))
 
-    # define indices of the second-to-last right parenthesis and corresponding left parenthesis
-    rpair = indexpairs[-2][1]
-    lpair = indexpairs[-2][0]
+    # define indices of the last pair of parentheses (for the 'N' term)
+    rpair = indexpairs[-1][1]
+    lpair = indexpairs[-1][0]
     
     # check if the expression is valid
     for i in range(len(string)):
         if string[i] not in varchars:
             raise NameError
 
-    # application if space before left bracket paired with second-to-last right bracket
+    # check if it is a variable
+    if len(indexpairs) < 2:
+           return lambdastring
+    
+    # application if there is a space before left bracket paired with second-to-last right bracket
     if string[lpair - 1] == ' ':
         lambdastring = Application.Application.frstring(string)
-    # abstraction
-    elif string[lpair + 1] == l and string[lpair + 2] == LambdaTerm.lam:
+    # abstraction if there is a lambda right after the left parenthesis
+    elif string[lpair + 1] == LambdaTerm.lam:
         lambdastring = Abstraction.Abstraction.frstring(string)
     
-    # otherwise it is a variable
+    # we have our result
     return lambdastring
 
     '''
