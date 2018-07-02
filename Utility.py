@@ -1,4 +1,4 @@
-import LambdaTerm, Abstraction, Application
+import LambdaTerm, Abstraction, Application, Variable
 
 # define usable variable names
 varchars = LambdaTerm.LambdaTerm.varchar

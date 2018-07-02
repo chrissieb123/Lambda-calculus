@@ -1,7 +1,7 @@
 from Application import Application
 from Abstraction import Abstraction
 from Variable import Variable
-from Utility import fromstring
+
 # we use less cumbersome notation as defined in the report
 
 # we first inititialise a few many used functions and a list of workable variables
@@ -59,30 +59,6 @@ nabs1 = Abstraction(y,napp2)
 lambNot = Abstraction(x,nabs1)
 
 
-# te following implements a pair, (λz.zab)
-papp1 = Application(z,a)
-papp2 = Application(papp1,b)
-lambPair = Abstraction(z,papp2)
-print(lambPair)
-
-# the following implements Q,
-#  where Q creates a new pair from a pair in which the first is the successor of second,
-# Q is eta-equivalent to (λpz.z(S(pT))(pT))
-qapp1 = Application(p,lambTrue)
-qapp2 = Application(successor,qapp1)
-qapp3 = Application(z,qapp2)
-qabs1 = Abstraction(z,qapp3)
-lambQ = Abstraction(p,qabs1)
-print(lambQ)
-# the following implements the predessecor function P, which is the -1 operator, λn.(nQ(λz.z00))F)
-prapp1 = Application(i,lambQ)
-prapp2 = Application(z,zero)
-prapp3 = Application(prapp2,zero)
-prapp4 = Application(prapp3,lambFalse)
-lambPredecessor = Abstraction(i,prapp4)
-print(lambPredecessor)
-
-
 class lambnumber(Abstraction):
     """These are numbers in lambda calculus representation, with their operators."""
 
@@ -121,12 +97,3 @@ class lambnumber(Abstraction):
 
 zero = lambnumber(0)
 een = lambnumber(1)
-twee = lambnumber(2)
-print(twee)
-drie = lambnumber(3)
-print(drie)
-
-#print(twintig * twee)
-
-
-

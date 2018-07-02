@@ -23,15 +23,15 @@ class Abstraction(LambdaTerm):
     def __str__(self):
         return "(" + str(LambdaTerm.lam) + str(self.head) + "." + str(self.body) + ")"
 
-    # apply beta reduction when applying a lambda term to a lambda abstraction
+    # apply bèta-reduction when applying a lambda term to a lambda abstraction
     def __call__(self, sub):
         rule = [self.head, sub]
         return self.body.substitute(rule)
 
-    # substitute lambda terms when it does not mean alpha conversion
+    # substitute lambda terms when it does not mean alpha-conversion
     def substitute(self, rule):
         if str(self.head) != str(rule[0]): # check if this is a legitimate substitution
-            # alpha convert until reducible first (substitution rule 5)
+            # alpha convert until reducible first (substitution rule (5))
             alph = self.tryalpha(rule)
             return Abstraction(alph.head, alph.body.substitute(rule))
         else:
@@ -74,21 +74,16 @@ class Abstraction(LambdaTerm):
         # do alpha-conversion with the next variable character until it works
         chars = LambdaTerm.varchar
         for j in range (0,len(chars)):
-            #print("rule: ", [newrule0,newrule1])
-            #print("alphconv: ", self.alphaconv([newrule0,newrule1]))
-
             cont = False
 
             # the input is incorrect if the head is in free variables of the substitute
             if str(self.head) in newrule1.freevar([]):
-                #print("Bad input: {} is in {}".format(self.head, newrule1.freevar([])))
                 if first:
                     first = False
                     newrule0 = self.head
                 cont = True
 
             if (not first) and str(newrule1) in self.body.freevar([]): # new head shouldn't bind variables
-                #print("New head binds free var: {} in {}".format(newrule1,self.body.freevar([])))
                 cont = True
 
             if cont:

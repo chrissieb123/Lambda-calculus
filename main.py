@@ -17,8 +17,6 @@ identity = Abstraction(x, x)
 absuz = Abstraction(u, z)
 absyx = Abstraction(y, x)
 
-#print("Is x a variable?", type(x) == Variable)
-
 print("------------------------- abstraction as body of an abstraction")
 
 # the following implements the lambda term:  (((λx.(λy.x) z) u)
@@ -38,9 +36,7 @@ print("------------------------- identity function")
 
 appliopid = Application(identity, u)
 
-print(identity)
 print(appliopid)
-
 print(appliopid.reduce())
 
 
@@ -73,18 +69,14 @@ print("------------------------- abstraction reduce")
 print(VB4abs)
 print(VB4abs.reduce())
 
-# print(LambdaTerm.fromstring("(((λx.(λy.x)) z) u)"))
-
 print("-------------------------")
 print("Alpha-Conversion")
 print("------------------------- ")
 
 print("------------------------- identity")
 print(identity)
-if (isinstance(identity, Abstraction)):
-    print(identity.alphaconv([identity.head,z]))
+print(identity.alphaconv([identity.head,z]))
 
-"""
 # the following implements ((λx.λy.x) y), this should be reduced to (λz.y) or some other variable than z (but not y)
 print("------------------------- exception")
 abs1 = Abstraction(y,x)
@@ -92,11 +84,6 @@ abs2 = Abstraction(x, abs1)
 
 print(abs2)
 print(abs2.alphaconv([abs2.head,y]))
-
-#alphapp1 = Application(vb2abs, y)
-
-#print(alphapp1.reduce())
-"""
 
 # We implement the lambda abstraction : (λx.(λx.x)), alphaconversion x -> y on outer lambda we get (λy.(λx.x))
 print("------------------------- multiple same heads")
@@ -139,38 +126,3 @@ print("------------------------- last example fully reduced")
 app = Application(Abstraction(h,abs),Application(x,y))
 print(app)
 print(app.fullreduce())
-
-print("------------------------- test")
-abs = Abstraction(x,Abstraction(y,q))
-print(abs)
-print(abs.substitute([q,Application(x,z)]))
-
-"""
-print("------------------------- arithmetic")
-#0 = (λsz.z)        =(λs.(λz.z)
-#S = (λxyz.y(xyz))  =(λx.λy.λz.(y (x (y z)))
-
-
-abs1 = Abstraction(z,z)
-zero = Abstraction(s,abs1)
-
-app1 = Application(y, z)
-app2 = Application(x, app1)
-app3 = Application(y, app2)
-
-labs1 = Abstraction(z, app3)
-labs2 = Abstraction(y, labs1)
-successor = Abstraction(x, labs2)
-lijst =[]
-def lambnumber(number, n,s=[]):
-    if n != 0:
-        s = Application(successor, number)
-        lambnumber(s, n - 1, s)
-    else:
-        lijst.append(s)
-
-lambnumber(zero,3)
-s = lijst[0]
-
-print(s.reduce())
-"""
