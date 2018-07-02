@@ -75,28 +75,3 @@ def fromstring(string):
     # we have our result
     return lambdastring
 
-    '''
-    # find most right bracket after removing outer brackets
-    string.strip(r)
-    nextr = string.rfind(r)
-
-    # application if space after bracket
-    if string[nextr+1] == ' ':
-        lamdbdat = Application.frstring(string)
-    # 
-    else:
-        # the corresponding left bracket
-        nextl = string[len(string)-nextr-1]
-
-        # abstraction if (λ follows bracket
-        if string[nextl+1] == l and string[nextl+2] == lam:
-            lambdat = Abstraction.frstring()
-    # variabele als alle karakters correct zijn
-    else: # Correct variable if all the characters in it are correct characters
-            for i in range(len(string)):
-                if string[i] not in varchars: # if there is an incorrect character, stop and raise exception
-                    raise NameError
-            lambdat = Variable(string)
-
-    return lambdat
-    '''
