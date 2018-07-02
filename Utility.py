@@ -37,12 +37,10 @@ def find_parentheses(s):
 # returns a lambda term created from the string argument
 # categorize lambda terms using brackets, working from outside in
 def fromstring(string):
-    # define characters for later convenience
+    # initialise return string
     lambdastring = ''
-    l = '('
-    r = ')'
 
-    # collect index pairs for every bracket or print error if expression is invalid
+    # collect index pairs for every parenthesis or print error if expression is invalid
     for s in enumerate(string, start=1):
         # find parentheses indices
         try:
@@ -52,26 +50,24 @@ def fromstring(string):
         except IndexError as e:
             print(str(e))
 
-    # define indices of the last pair of parentheses (for the 'N' term)
-    rpair = indexpairs[-1][1]
-    lpair = indexpairs[-1][0]
-    
     # check if the expression is valid
     for i in range(len(string)):
         if string[i] not in varchars:
             raise NameError
-
-    # check if it is a variable
-    if len(indexpairs) < 2:
-           return lambdastring
+            
+    # define indices of the last pair of parentheses (for the 'N' term)
+    # the N-term in the application (M N) has parentheses around the expression as well (i.e. N = (N'))
+    rpair = indexpairs[-1][1]
+    lpair = indexpairs[-1][0]
     
     # application if there is a space before left bracket paired with second-to-last right bracket
-    if string[lpair - 1] == ' ':
+    if len(indexpairs) < 2 and string[lpair - 1] == ' ':
         lambdastring = Application.Application.frstring(string)
     # abstraction if there is a lambda right after the left parenthesis
     elif string[lpair + 1] == LambdaTerm.lam:
         lambdastring = Abstraction.Abstraction.frstring(string)
     
-    # we have our result
+    # it is a variable; remove the outer brackets before returning
+    lambdastring = lambdastring[1:-1]
     return lambdastring
 
