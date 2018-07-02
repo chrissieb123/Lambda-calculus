@@ -7,6 +7,7 @@ from Variable import Variable
 
 print("-------------------------")
 print("Bèta-Reduction")
+print("------------------------- ")
 
 # create variables
 (q,w,e,r,t,y,u,i,s,x,z) = (Variable("q"), Variable("w"), Variable("e"), Variable("r"), Variable("t"), Variable("y"), Variable("u"), Variable("i"),Variable("s"),Variable("x"),Variable("z"))
@@ -76,6 +77,8 @@ print(VB4abs.reduce())
 
 print("-------------------------")
 print("Alpha-Conversion")
+print("------------------------- ")
+
 print("------------------------- identity")
 print(identity)
 if (isinstance(identity, Abstraction)):
@@ -112,15 +115,18 @@ print(abs.alphaconv([abs.head, z]))
 
 print("------------------------- ")
 print("Bèta-reduce with alpha-conversion")
+print("------------------------- ")
 
 # Implements the application: ((λx.(λy.(x y))) (x y)), alpha-converts the x's in identity to a random variable and then reduces to: (λq.((x y) q))
 print("------------------------- variable bound in application")
-
 app = Application(Abstraction(x,Abstraction(y,Application(x,y))),Application(x,y))
 print(app)
-#print(app.reduce())
 print(app.fullreduce())
 
+print("------------------------- variable bound in application")
+app = Application(Abstraction(x,Abstraction(y,Application(x,y))),Application(x,y))
+print(app)
+print(app.fullreduce())
 
 """
 print("------------------------- arithmetic")
